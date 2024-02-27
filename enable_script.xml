@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable>
+  <CheatEntries>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"Enable"</Description>
+      <LastState/>
+      <VariableType>Auto Assembler Script</VariableType>
+      <AssemblerScript>[ENABLE]
+{$lua}
+if syntaxcheck then return end
+
+LaunchMonoDataCollector()
+
+------------------------------------------------------------------------------
+-------------------------------- Script Start --------------------------------
+
+local main_alloc_name = "alloc_misc"
+
+--symbols table is multiplied (cartesian product) with suffixes
+local symbols = { "list_symbol1" }
+
+local suffixes = { "_index" }
+
+--symbols_map defines a map between symbol names and size of the
+--allocation for that name in bytes.
+local symbols_map = { id_for_memory_selected = 4 }
+for _, v in ipairs(symbols) do
+  local name = v .. suffixes[#suffixes]
+  symbols_map[name] = 4
+end
+CE_pkg.memory_allocs.SetupMemoryFromMap(main_alloc_name, symbols_map, 256)
+
+
+local classes_to_register = {}
+local statics_to_register = {}
+local both_to_register = {}
+
+CE_pkg.mono_ext.DefaultSetup()
+CE_pkg.mono_ext.GameSetup(
+  "Assembly-CSharp.dll", classes_to_register, statics_to_register, both_to_register
+)
+
+
+{$asm}
+[DISABLE]
+
+</AssemblerScript>
+    </CheatEntry>
+  </CheatEntries>
+</CheatTable>
